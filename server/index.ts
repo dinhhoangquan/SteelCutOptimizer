@@ -1,6 +1,5 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
-import { setupVite, serveStatic, log } from "./vite";
 import session from "express-session";
 import { MemoryStore } from "express-session";
 
@@ -9,17 +8,20 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 // Setup session middleware
-app.use(session({
-  secret: process.env.SESSION_SECRET || 'tlu-steel-cutting-app-secret',
-  resave: false,
-  saveUninitialized: false,
-  store: new MemoryStore(), // In production, use a more robust store like Redis or MongoDB
-  cookie: {
-    secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
-    maxAge: 24 * 60 * 60 * 1000 // 24 hours
-  }
-}));
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET || "tlu-steel-cutting-app-secret",
+    resave: false,
+    saveUninitialized: false,
+    store: new MemoryStore(), // In production, use a more robust store like Redis or MongoDB
+    cookie: {
+      secure: process.env.NODE_ENV === "production", // Use secure cookies in production
+      maxAge: 24 * 60 * 60 * 1000, // 24 hours
+    },
+  })
+);
 
+// Middleware để log request và response
 app.use((req, res, next) => {
   const start = Date.now();
   const path = req.path;
@@ -43,7 +45,7 @@ app.use((req, res, next) => {
         logLine = logLine.slice(0, 79) + "…";
       }
 
-      log(logLine);
+      console.log(logLine); // Thay log() bằng console.log() vì log() được định nghĩa trong server/vite.ts
     }
   });
 
@@ -53,6 +55,7 @@ app.use((req, res, next) => {
 (async () => {
   const server = await registerRoutes(app);
 
+  // Xử lý lỗi
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
     const status = err.status || err.statusCode || 500;
     const message = err.message || "Internal Server Error";
@@ -61,24 +64,22 @@ app.use((req, res, next) => {
     throw err;
   });
 
-  // importantly only setup vite in development and after
-  // setting up all the other routes so the catch-all route
-  // doesn't interfere with the other routes
-  if (app.get("env") === "development") {
-    await setupVite(app, server);
-  } else {
-    serveStatic(app);
-  }
+  // Định nghĩa port và host
+  const port = process.env.PORT || 5000; // Sử dụng process.env.PORT cho Render
+  const host = "0.0.0.0";
 
-  // ALWAYS serve the app on port 5000
-  // this serves both the API and the client.
-  // It is the only port that is not firewalled.
-  const port = 5000;
-  server.listen({
-    port,
-    host: "0.0.0.0",
-    reusePort: true,
-  }, () => {
-    log(`serving on port ${port}`);
+  // Khởi động server
+  server.listen(port, host, () => {
+    console.log(`Serving on http://${host}:${port}`);
+  });
+
+  // Xử lý lỗi khi khởi động server
+  server.on("error", (error: NodeJS.ErrnoException) => {
+    if (error.code === "EADDRINUSE") {
+      console.log(`Port ${port} is already in use. Please try a different port.`);
+    } else {
+      console.log(`Failed to start server: ${error.message}`);
+    }
+    process.exit(1);
   });
 })();
