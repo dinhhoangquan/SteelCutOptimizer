@@ -1,8 +1,8 @@
 services:
   - type: web
     name: steelcutoptimizer-backend
-    env: docker  # Sử dụng Docker
-    dockerfilePath: ./Dockerfile  # Đường dẫn đến Dockerfile
+    env: docker
+    dockerfilePath: ./Dockerfile
     region: singapore
     plan: free
     branch: main
@@ -18,7 +18,6 @@ services:
   - type: web
     name: steelcutoptimizer-frontend
     env: static
-    plan: free
     branch: main
     rootDir: client
     buildCommand: npm install && npm run build:client
