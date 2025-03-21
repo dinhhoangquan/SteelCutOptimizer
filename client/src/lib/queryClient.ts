@@ -7,12 +7,18 @@ async function throwIfResNotOk(res: Response) {
   }
 }
 
+// Thêm base URL cho backend
+const BASE_URL = process.env.NODE_ENV === "production"
+  ? "https://steelcutoptimizer.onrender.com"
+  : "http://localhost:5000";
+
 export async function apiRequest(
   method: string,
   url: string,
   data?: unknown | undefined,
 ): Promise<Response> {
-  const res = await fetch(url, {
+  const fullUrl = `${BASE_URL}${url}`; // Thêm BASE_URL vào url
+  const res = await fetch(fullUrl, {
     method,
     headers: data ? { "Content-Type": "application/json" } : {},
     body: data ? JSON.stringify(data) : undefined,
@@ -29,7 +35,8 @@ export const getQueryFn: <T>(options: {
 }) => QueryFunction<T> =
   ({ on401: unauthorizedBehavior }) =>
   async ({ queryKey }) => {
-    const res = await fetch(queryKey[0] as string, {
+    const fullUrl = `${BASE_URL}${queryKey[0]}`; // Thêm BASE_URL vào queryKey
+    const res = await fetch(fullUrl, {
       credentials: "include",
     });
 
