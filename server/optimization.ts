@@ -196,10 +196,10 @@ print(json.dumps(result))
     throw new Error(`Failed to write input data: ${error.message}`);
   }
 
-  // Run the optimization script using python3 from virtual environment
+  // Run the optimization script using python3
   try {
-    console.log("Running Python script with command: /opt/venv/bin/python3", scriptPath, inputFilePath);
-    const { stdout, stderr } = await execPromise(`/opt/venv/bin/python3 "${scriptPath}" "${inputFilePath}"`);
+    console.log("Running Python script with command: python3", scriptPath, inputFilePath);
+    const { stdout, stderr } = await execPromise(`python3 "${scriptPath}" "${inputFilePath}"`);
 
     if (stderr) {
       console.error("Python script stderr:", stderr);
