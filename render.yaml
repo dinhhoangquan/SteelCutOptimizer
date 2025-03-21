@@ -17,9 +17,9 @@ services:
         value: production
     preBuildCommand: apt-get update && apt-get install -y python3 python3-pip && python3 -m pip install pulp
 
-  - type: static
+  - type: web  # Sửa từ type: static thành type: web
     name: steelcutoptimizer-frontend
-    env: static
+    env: static  # Giữ env: static để chỉ định đây là Static Site
     region: singapore
     plan: free
     branch: main
