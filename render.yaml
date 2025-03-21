@@ -1,7 +1,6 @@
 services:
-  # Backend (Web Service)
   - type: web
-    name: tlusteelcutoptimizer-backend
+    name: steelcutoptimizer-backend
     env: node
     region: singapore
     plan: free
@@ -16,11 +15,10 @@ services:
         value: tlu-steel-cutting-app-secret
       - key: NODE_ENV
         value: production
-    preBuildCommand: apt-get update && apt-get install -y python3 python3-pip && pip3 install pulp
+    preBuildCommand: apt-get update && apt-get install -y python3 python3-pip && python3 -m pip install pulp
 
-  # Frontend (Static Site)
   - type: static
-    name: tlusteelcutoptimizer-frontend
+    name: steelcutoptimizer-frontend
     env: static
     region: singapore
     plan: free
