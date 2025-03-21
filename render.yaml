@@ -1,13 +1,12 @@
 services:
   - type: web
     name: steelcutoptimizer-backend
-    env: node
+    env: docker  # Sử dụng Docker
+    dockerfilePath: ./Dockerfile  # Đường dẫn đến Dockerfile
     region: singapore
     plan: free
     branch: main
     rootDir: .
-    buildCommand: npm install && npm run build
-    startCommand: npm start
     envVars:
       - key: NODE_VERSION
         value: 18
@@ -15,17 +14,15 @@ services:
         value: tlu-steel-cutting-app-secret
       - key: NODE_ENV
         value: production
-    preDeployCommand: apt-get update && apt-get install -y python3 python3-pip && python3 -m pip install pulp  # Sửa từ preBuildCommand
 
   - type: web
     name: steelcutoptimizer-frontend
     env: static
-    region: singapore
     plan: free
     branch: main
     rootDir: client
     buildCommand: npm install && npm run build:client
-    staticPublishPath: dist/public  # Sửa từ publishDir
+    staticPublishPath: dist/public
     envVars:
       - key: NODE_VERSION
         value: 18
