@@ -7,16 +7,24 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
+// Cấu hình CORS (nếu cần cho frontend sau này)
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*"); // Thay * bằng URL frontend khi triển khai
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+  next();
+});
+
 // Setup session middleware
 app.use(
   session({
     secret: process.env.SESSION_SECRET || "tlu-steel-cutting-app-secret",
     resave: false,
     saveUninitialized: false,
-    store: new MemoryStore(), // In production, use a more robust store like Redis or MongoDB
+    store: new MemoryStore(),
     cookie: {
-      secure: process.env.NODE_ENV === "production", // Use secure cookies in production
-      maxAge: 24 * 60 * 60 * 1000, // 24 hours
+      secure: process.env.NODE_ENV === "production",
+      maxAge: 24 * 60 * 60 * 1000,
     },
   })
 );
@@ -45,17 +53,21 @@ app.use((req, res, next) => {
         logLine = logLine.slice(0, 79) + "…";
       }
 
-      console.log(logLine); // Thay log() bằng console.log() vì log() được định nghĩa trong server/vite.ts
+      console.log(logLine);
     }
   });
 
   next();
 });
 
+// Thêm route mặc định cho GET /
+app.get("/", (req, res) => {
+  res.json({ message: "Welcome to SteelCutOptimizer API!" });
+});
+
 (async () => {
   const server = await registerRoutes(app);
 
-  // Xử lý lỗi
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
     const status = err.status || err.statusCode || 500;
     const message = err.message || "Internal Server Error";
@@ -64,16 +76,12 @@ app.use((req, res, next) => {
     throw err;
   });
 
-  // Định nghĩa port và host
-  const port = process.env.PORT || 5000; // Sử dụng process.env.PORT cho Render
+  const port = process.env.PORT || 5000;
   const host = "0.0.0.0";
-
-  // Khởi động server
   server.listen(port, host, () => {
     console.log(`Serving on http://${host}:${port}`);
   });
 
-  // Xử lý lỗi khi khởi động server
   server.on("error", (error: NodeJS.ErrnoException) => {
     if (error.code === "EADDRINUSE") {
       console.log(`Port ${port} is already in use. Please try a different port.`);
