@@ -15,17 +15,17 @@ services:
         value: tlu-steel-cutting-app-secret
       - key: NODE_ENV
         value: production
-    preBuildCommand: apt-get update && apt-get install -y python3 python3-pip && python3 -m pip install pulp
+    preDeployCommand: apt-get update && apt-get install -y python3 python3-pip && python3 -m pip install pulp  # Sửa từ preBuildCommand
 
-  - type: web  # Sửa từ type: static thành type: web
+  - type: web
     name: steelcutoptimizer-frontend
-    env: static  # Giữ env: static để chỉ định đây là Static Site
+    env: static
     region: singapore
     plan: free
     branch: main
     rootDir: client
     buildCommand: npm install && npm run build:client
-    publishDir: dist/public
+    staticPublishPath: dist/public  # Sửa từ publishDir
     envVars:
       - key: NODE_VERSION
         value: 18
