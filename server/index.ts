@@ -9,7 +9,7 @@ app.use(express.urlencoded({ extended: false }));
 
 // Cấu hình CORS (nếu cần cho frontend sau này)
 app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "*"); // Thay * bằng URL frontend khi triển khai
+  res.header("Access-Control-Allow-Origin", "https://steelcutoptimizer-fontend.onrender.com"); // Thay * bằng URL frontend khi triển khai
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
   next();
