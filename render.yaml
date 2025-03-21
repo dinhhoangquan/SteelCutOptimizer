@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: tlusteelcutoptimizer-backend
+    env: node
+    region: singapore
+    plan: free
+    branch: main
+    rootDir: .
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_VERSION
+        value: 18
+      - key: SESSION_SECRET
+        value: tlu-steel-cutting-app-secret
+      - key: NODE_ENV
+        value: production
+    preBuildCommand: apt-get update && apt-get install -y python3 python3-pip && pip3 install pulp
