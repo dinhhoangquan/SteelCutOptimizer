@@ -199,7 +199,7 @@ print(json.dumps(result))
   // Run the optimization script using python3
   try {
     console.log("Running Python script with command: python3", scriptPath, inputFilePath);
-    const { stdout, stderr } = await execPromise(`python3 "${scriptPath}" "${inputFilePath}"`);
+    const { stdout, stderr } = await execPromise(`/opt/venv/bin/python3 "${scriptPath}" "${inputFilePath}"`);
 
     if (stderr) {
       console.error("Python script stderr:", stderr);
