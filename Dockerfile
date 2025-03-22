@@ -2,10 +2,10 @@
 FROM node:18
 
 # Cài đặt các công cụ cần thiết
-RUN apt-get update && apt-get install -y python3 python3-pip python3-venv
+RUN apt-get update && apt-get install -y python3 python3-pip python3-venv pipx
 
-# Cài đặt pulp trực tiếp vào Python toàn cục
-RUN pip3 install pulp
+# Cài đặt pulp bằng pipx
+RUN pipx install pulp
 
 # Cài đặt các dependencies của Node.js
 WORKDIR /opt/render/project/src
